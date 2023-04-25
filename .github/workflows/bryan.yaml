@@ -3,18 +3,21 @@ name: shell commands
 on:
   - push
 
+env:
+   AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
 jobs:
   run-shell-commands:
     runs-on: ubuntu-latest
     steps: 
-      - name: echo string
-        run: echo "Hello"
-      - name: Multi line string
-        run: |
-          pwd
-          node -v
-          ls -a
-          date
-          uptime
-          echo $?
-          
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.9
+      - name: Terraform init
+        run: terraform init
+      - name: Terraform Validate
+        run: terraform validate 
